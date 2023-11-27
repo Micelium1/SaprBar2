@@ -12,16 +12,19 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     preproccessor.cpp \
+    processor.cpp \
     validatedcellwidget.cpp
 
 HEADERS += \
     mainwindow.h \
     preproccessor.h \
+    processor.h \
     validatedcellwidget.h
 
 FORMS += \
     mainwindow.ui \
-    preproccessor.ui
+    preproccessor.ui \
+    processor.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

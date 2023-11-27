@@ -25,6 +25,8 @@ public:
     void LoadFromFileButton_clicked();
 
     void NonSealingDefence(bool checked);
+
+    void ExitButton_clicked();
 private:
     Ui::Preproccessor *ui;
 };

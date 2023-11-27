@@ -32,6 +32,7 @@ Preproccessor::Preproccessor(QWidget *parent) :
     }
     }
     ui->NodesTable->setItemDelegateForColumn(0,new ValidatedCellWidget(ui->NodesTable));
+    connect(ui->ExitButton,&QPushButton::clicked, this,&Preproccessor::ExitButton_clicked);
     connect(ui->AddToRodsButton,&QPushButton::clicked,this,&Preproccessor::AddToRodsButton_clicked);
     connect(ui->DeleteFromRodsButton,&QPushButton::clicked,this,&Preproccessor::DeleteFromRodsButton_clicked);
     connect(ui->SaveToFileButton,&QPushButton::clicked,this,&Preproccessor::SaveToFileButton_clicked);
@@ -43,6 +44,11 @@ Preproccessor::Preproccessor(QWidget *parent) :
 Preproccessor::~Preproccessor()
 {
     delete ui;
+}
+
+void Preproccessor::ExitButton_clicked()
+{
+    this->close();
 }
 
 void Preproccessor::AddToRodsButton_clicked()

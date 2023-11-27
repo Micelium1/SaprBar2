@@ -17,7 +17,7 @@ QWidget *ValidatedCellWidget::createEditor(QWidget *parent, const QStyleOptionVi
     }
     else
     {
-        Editor->setValidator(new QDoubleValidator(0.0,DBL_MAX,-1,Editor));
+        Editor->setValidator(new QDoubleValidator(0.0,INFINITY,-1,Editor));
     }
     return Editor;
 }
