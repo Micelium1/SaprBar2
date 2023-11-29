@@ -128,10 +128,14 @@ void Preproccessor::SaveToFileButton_clicked()
         }
         AboutToSerializeRods.append(Object);
     }
+    QJsonObject Sealings;
+    Sealings["SealingLeft"] = ui->SealingLeft->isChecked();
+    Sealings["SealingRight"] = ui->SealingRight->isChecked();
     QFile JsonFile(fileName);
     QJsonObject Data;
     Data.insert("Nodes",AboutToSerialize);
     Data.insert("Rods",AboutToSerializeRods);
+    Data.insert("Sealings",Sealings);
     JsonFile.open(QFile::WriteOnly);
     JsonFile.write(QJsonDocument(Data).toJson(QJsonDocument::Indented));
     JsonFile.close();
@@ -140,7 +144,7 @@ void Preproccessor::SaveToFileButton_clicked()
 
 void Preproccessor::LoadFromFileButton_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Save File", "NodesTable.json", "JSON files (*.json)");
+    QString fileName = QFileDialog::getOpenFileName(this, "Save File", "Construction.json", "JSON files (*.json)");
     if (fileName.isEmpty()) return;
 
     QFile JsonFile(fileName);
@@ -148,6 +152,7 @@ void Preproccessor::LoadFromFileButton_clicked()
     QJsonObject Data = QJsonDocument::fromJson(JsonFile.readAll()).object();
     QJsonArray AboutToDeserialize = Data["Nodes"].toArray();
     QJsonArray AboutToDeserializeRods = Data["Rods"].toArray();
+    QJsonObject Sealings = Data["Sealings"].toObject();
 
     JsonFile.close();
     ui->NodesTable->clearContents();
@@ -174,6 +179,8 @@ void Preproccessor::LoadFromFileButton_clicked()
            ui->RodsTable->setItem(ui->RodsTable->rowCount()-1,IterColumn,Item);
         }
     }
+    ui->SealingLeft->setChecked(Sealings["SealingLeft"].toBool());
+    ui->SealingRight->setChecked(Sealings["SealingRight"].toBool());
 }
 
 void Preproccessor::NonSealingDefence(bool checked)

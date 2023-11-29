@@ -1,18 +1,18 @@
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 
-#include <QWidget>
+#include <QDialog>
 
 namespace Ui {
 class Processor;
 }
 
-class Processor : public QWidget
+class Processor : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Processor(QWidget *parent = nullptr);
+    explicit Processor(QDialog *parent = nullptr);
     ~Processor();
 
 private:

@@ -1,8 +1,8 @@
 #include "processor.h"
 #include "ui_processor.h"
 
-Processor::Processor(QWidget *parent) :
-    QWidget(parent),
+Processor::Processor(QDialog *parent) :
+    QDialog(parent),
     ui(new Ui::Processor)
 {
     ui->setupUi(this);

@@ -18,6 +18,8 @@ public:
 private slots:
     void on_PreprocessorButton_clicked();
 
+    void on_ProcessorButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
