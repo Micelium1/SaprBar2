@@ -78,8 +78,11 @@
            </item>
            <item>
             <widget class="QTableWidget" name="RodsTable">
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>true</bool>
+             </attribute>
              <attribute name="horizontalHeaderDefaultSectionSize">
-              <number>82</number>
+              <number>105</number>
              </attribute>
              <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
               <bool>false</bool>
@@ -94,7 +97,7 @@
              </column>
              <column>
               <property name="text">
-               <string>S</string>
+               <string>A</string>
               </property>
              </column>
              <column>

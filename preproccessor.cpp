@@ -155,7 +155,7 @@ void Preproccessor::LoadFromFileButton_clicked()
     QJsonObject Sealings = Data["Sealings"].toObject();
 
     JsonFile.close();
-    ui->NodesTable->clearContents();
+    ui->NodesTable->setRowCount(0);
     for(const QJsonValueRef& Iter: AboutToDeserialize)
     {
         QJsonObject Object(Iter.toObject());
@@ -167,7 +167,7 @@ void Preproccessor::LoadFromFileButton_clicked()
            ui->NodesTable->setItem(ui->NodesTable->rowCount()-1,IterColumn,Item);
         }
     }
-    ui->RodsTable->clearContents();
+    ui->RodsTable->setRowCount(0);
     for(const QJsonValueRef& Iter: AboutToDeserializeRods)
     {
         QJsonObject Object(Iter.toObject());
