@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "preproccessor.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -22,5 +23,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    std::vector<RodsTableDataStructure> RodsTable;
+    std::vector<NodesTableDataStructure> NodesTable;
 };
 #endif // MAINWINDOW_H

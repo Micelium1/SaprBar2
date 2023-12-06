@@ -54,6 +54,11 @@ void Preproccessor::ExitButton_clicked()
 void Preproccessor::AddToRodsButton_clicked()
 {
     ui->RodsTable->insertRow(ui->RodsTable->rowCount());
+
+    for(int i = 0,RodsRows = ui->RodsTable->columnCount(); i <= RodsRows;++i)
+    {
+        ui->RodsTable->setItem(ui->RodsTable->rowCount()-1,i,new QTableWidgetItem("0"));
+    }
     int NodeRows = ui->NodesTable->rowCount();
     if (NodeRows == 0)
     {
@@ -194,5 +199,51 @@ void Preproccessor::NonSealingDefence(bool checked)
     {
        ui->SealingLeft->setChecked(true);
     }
+}
+RodsTableDataStructure::RodsTableDataStructure(double _lenght, double _area,double _E_const, double _forse, double _allowed_tension)
+{
+    lenght = _lenght;
+    area = _area;
+    E_const = _E_const;
+    forse = _forse;
+    allowed_tension = _allowed_tension;
+}
+double RodsTableDataStructure::lenghtGet()
+{
+    return lenght;
+}
+double RodsTableDataStructure::areaGet()
+{
+    return area;
+}
+double RodsTableDataStructure::forseGet()
+{
+    return forse;
+}
+double RodsTableDataStructure::allowedTensionGet()
+{
+    return allowed_tension;
+}
+NodesTableDataStructure::NodesTableDataStructure(double _node_forse)
+{
+    node_forse = _node_forse;
+}
+double NodesTableDataStructure::nodeForseGet()
+{
+    return node_forse;
+}
+std::vector<RodsTableDataStructure> Preproccessor::RodsTableGet()
+{
+    std::vector<RodsTableDataStructure> RodsTable;
+    for (int current_row = 0,table_end = ui->RodsTable->rowCount();current_row < table_end;++current_row)
+        RodsTable.push_back(RodsTableDataStructure(ui->RodsTable->item(current_row,0)->text().toDouble(),ui->RodsTable->item(current_row,1)->text().toDouble(),ui->RodsTable->item(current_row,2)->text().toDouble(),ui->RodsTable->item(current_row,3)->text().toDouble(),ui->RodsTable->item(current_row,4)->text().toDouble()));
+    return RodsTable;
+}
+std::vector<NodesTableDataStructure> Preproccessor::NodesTableGet()
+{
+    std::vector<NodesTableDataStructure> NodesTable;
+    for (int current_row = 0,table_end = ui->NodesTable->rowCount();current_row < table_end;++current_row)
+        NodesTable.push_back(NodesTableDataStructure(ui->NodesTable->item(current_row,0)->text().toDouble()));
+    return NodesTable;
 }
 

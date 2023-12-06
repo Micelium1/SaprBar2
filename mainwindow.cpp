@@ -21,6 +21,13 @@ void MainWindow::on_PreprocessorButton_clicked()
     hide();
     Preproccessor Window;
     Window.exec();
+    RodsTable = Window.RodsTableGet();
+    //for (unsigned int i = 0;i < RodsTable.size();++i)
+    //    qDebug("%f",RodsTable[i].lenghtGet());
+    NodesTable = Window.NodesTableGet();
+    //for (unsigned int i = 0;i < NodesTable.size();++i)
+    //    qDebug("%f",NodesTable[i].nodeForseGet());
+
     show();
 }
 
@@ -28,8 +35,9 @@ void MainWindow::on_PreprocessorButton_clicked()
 void MainWindow::on_ProcessorButton_clicked()
 {
     hide();
-    Processor Window;
+    Processor Window(RodsTable,NodesTable);
     Window.exec();
+
     show();
 }
 
