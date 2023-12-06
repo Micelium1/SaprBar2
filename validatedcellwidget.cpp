@@ -3,7 +3,6 @@
 #include "QDoubleValidator"
 #include "QStyleOption"
 #include "limits"
-#include "float.h"
 ValidatedCellWidget::ValidatedCellWidget(QObject *parent,bool _NegRestriction)
     : QStyledItemDelegate(parent)
 {
@@ -18,7 +17,7 @@ QWidget *ValidatedCellWidget::createEditor(QWidget *parent, const QStyleOptionVi
     }
     else
     {
-        Editor->setValidator(new QDoubleValidator(LDBL_MIN,LDBL_MAX,-1,Editor));
+        Editor->setValidator(new QDoubleValidator(0.0,INFINITY,-1,Editor));
     }
     return Editor;
 }
