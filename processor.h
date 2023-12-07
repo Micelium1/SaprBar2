@@ -13,7 +13,7 @@ class Processor : public QDialog
     Q_OBJECT
 
 public:
-    explicit Processor(std::vector<RodsTableDataStructure> _RodsTable,std::vector<NodesTableDataStructure> _NodesTable,QDialog *parent = nullptr);
+    explicit Processor(const std::vector<RodsTableDataStructure>* _RodsTable,const std::vector<NodesTableDataStructure>* _NodesTable,bool* Sealings,QDialog *parent = nullptr);
     ~Processor();
     void MatrixACalculator();
     void VectorBCalculator();
@@ -21,8 +21,9 @@ public:
 
 private:
     Ui::Processor *ui;
-    std::vector<RodsTableDataStructure> RodsTable;
-    std::vector<NodesTableDataStructure> NodesTable;
+    const std::vector<RodsTableDataStructure>* RodsTable;
+    const std::vector<NodesTableDataStructure>* NodesTable;
+    bool* Sealings;
 };
 
 #endif // PROCESSOR_H

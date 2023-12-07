@@ -23,7 +23,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    std::vector<RodsTableDataStructure> RodsTable;
-    std::vector<NodesTableDataStructure> NodesTable;
+    std::vector<RodsTableDataStructure>* RodsTable = nullptr;
+    std::vector<NodesTableDataStructure>* NodesTable = nullptr;
+    bool* Sealings = nullptr;
 };
 #endif // MAINWINDOW_H

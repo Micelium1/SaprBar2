@@ -8,7 +8,7 @@
 #include "QFileDialog"
 #include "QMessageBox"
 #include "validatedcellwidget.h"
-
+#include "QGraphicsRectItem"
 Preproccessor::Preproccessor(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Preproccessor)
@@ -31,6 +31,8 @@ Preproccessor::Preproccessor(QWidget *parent) :
     }
     }
     }
+    QGraphicsScene* scene = new QGraphicsScene(ui->RodsVewier);
+    ui->RodsVewier->setScene(scene);
     ui->NodesTable->setItemDelegateForColumn(0,new ValidatedCellWidget(ui->NodesTable));
     connect(ui->ExitButton,&QPushButton::clicked, this,&Preproccessor::ExitButton_clicked);
     connect(ui->AddToRodsButton,&QPushButton::clicked,this,&Preproccessor::AddToRodsButton_clicked);
@@ -39,8 +41,49 @@ Preproccessor::Preproccessor(QWidget *parent) :
     connect(ui->LoadFromFileButton,&QPushButton::clicked,this,&Preproccessor::LoadFromFileButton_clicked);
     connect(ui->SealingLeft,&QCheckBox::clicked,this,&Preproccessor::NonSealingDefence);
     connect(ui->SealingRight,&QCheckBox::clicked,this,&Preproccessor::NonSealingDefence);
+    connect(ui->RodsTable,&QTableWidget::cellChanged,this,&Preproccessor::RodsModifier);
 }
+void Preproccessor::RodsDrawer()
+{
+    QGraphicsScene* scene = ui->RodsVewier->scene();
+    double x = 0;
+    for(QGraphicsRectItem* current_rod:RodsItems)
+    {
+        x+= current_rod->rect().width();
+        //if (max_h < current_rod->rect().height()) max_h = current_rod->rect().height();
+    }//,max_h/2-Rod.areaGet()/2+100,Rod.lenghtGet(),Rod.areaGet()
+    RodsItems.emplace_back(scene->addRect(x,0,0,0));
+}
+void Preproccessor::RodsModifier(int row,int column)
+{
+    if(column == 0)
+    {
 
+        double lenght = ui->RodsTable->item(row,0)->text().toDouble();
+        double dx = lenght - RodsItems[row]->rect().width();
+        RodsItems[row]->setRect(RodsItems[row]->rect().left(),RodsItems[row]->rect().y(),lenght,RodsItems[row]->rect().height());
+
+        ++row;
+        for(int rod_number = RodsItems.size();row < rod_number;++row)
+        {
+            RodsItems[row]->moveBy(dx,0);
+        }
+    }
+    else if(column == 1)
+    {
+        double max_h = 0;
+        double area = ui->RodsTable->item(row,1)->text().toDouble();
+        for(QGraphicsRectItem* current_rod:RodsItems)
+        {
+            if (max_h < current_rod->rect().height()) max_h = current_rod->rect().height();
+        }
+        RodsItems[row]->setRect(RodsItems[row]->rect().left(),max_h/2-area/2+35,RodsItems[row]->rect().width(),area);
+        for(QGraphicsRectItem* current_rod:RodsItems)
+        {
+            current_rod->setRect(current_rod->rect().left(),max_h/2-current_rod->rect().height()/2+35,current_rod->rect().width(),current_rod->rect().height());
+        }
+    }
+}
 Preproccessor::~Preproccessor()
 {
     delete ui;
@@ -53,6 +96,7 @@ void Preproccessor::ExitButton_clicked()
 
 void Preproccessor::AddToRodsButton_clicked()
 {
+    RodsDrawer();
     ui->RodsTable->insertRow(ui->RodsTable->rowCount());
 
     for(int i = 0,RodsRows = ui->RodsTable->columnCount(); i <= RodsRows;++i)
@@ -67,6 +111,7 @@ void Preproccessor::AddToRodsButton_clicked()
     }
     ui->NodesTable->insertRow(NodeRows);
     ui->NodesTable->setItem(NodeRows,0,new QTableWidgetItem("0"));
+
 }
 
 
@@ -208,19 +253,19 @@ RodsTableDataStructure::RodsTableDataStructure(double _lenght, double _area,doub
     forse = _forse;
     allowed_tension = _allowed_tension;
 }
-double RodsTableDataStructure::lenghtGet()
+double RodsTableDataStructure::lenghtGet() const
 {
     return lenght;
 }
-double RodsTableDataStructure::areaGet()
+double RodsTableDataStructure::areaGet() const
 {
     return area;
 }
-double RodsTableDataStructure::forseGet()
+double RodsTableDataStructure::forseGet() const
 {
     return forse;
 }
-double RodsTableDataStructure::allowedTensionGet()
+double RodsTableDataStructure::allowedTensionGet() const
 {
     return allowed_tension;
 }
@@ -228,22 +273,31 @@ NodesTableDataStructure::NodesTableDataStructure(double _node_forse)
 {
     node_forse = _node_forse;
 }
-double NodesTableDataStructure::nodeForseGet()
+double NodesTableDataStructure::nodeForseGet() const
 {
     return node_forse;
 }
-std::vector<RodsTableDataStructure> Preproccessor::RodsTableGet()
+std::vector<RodsTableDataStructure>* Preproccessor::RodsTableGet()
 {
-    std::vector<RodsTableDataStructure> RodsTable;
+    std::vector<RodsTableDataStructure>* RodsTable = new std::vector<RodsTableDataStructure>;
+    RodsTable->reserve(ui->RodsTable->rowCount());
     for (int current_row = 0,table_end = ui->RodsTable->rowCount();current_row < table_end;++current_row)
-        RodsTable.push_back(RodsTableDataStructure(ui->RodsTable->item(current_row,0)->text().toDouble(),ui->RodsTable->item(current_row,1)->text().toDouble(),ui->RodsTable->item(current_row,2)->text().toDouble(),ui->RodsTable->item(current_row,3)->text().toDouble(),ui->RodsTable->item(current_row,4)->text().toDouble()));
+        RodsTable->emplace_back(RodsTableDataStructure(ui->RodsTable->item(current_row,0)->text().toDouble(),ui->RodsTable->item(current_row,1)->text().toDouble(),ui->RodsTable->item(current_row,2)->text().toDouble(),ui->RodsTable->item(current_row,3)->text().toDouble(),ui->RodsTable->item(current_row,4)->text().toDouble()));
     return RodsTable;
 }
-std::vector<NodesTableDataStructure> Preproccessor::NodesTableGet()
+std::vector<NodesTableDataStructure>* Preproccessor::NodesTableGet()
 {
-    std::vector<NodesTableDataStructure> NodesTable;
+    std::vector<NodesTableDataStructure>* NodesTable = new std::vector<NodesTableDataStructure>;
+    NodesTable->reserve(ui->NodesTable->rowCount());
     for (int current_row = 0,table_end = ui->NodesTable->rowCount();current_row < table_end;++current_row)
-        NodesTable.push_back(NodesTableDataStructure(ui->NodesTable->item(current_row,0)->text().toDouble()));
+        NodesTable->emplace_back(NodesTableDataStructure(ui->NodesTable->item(current_row,0)->text().toDouble()));
     return NodesTable;
+}
+bool* Preproccessor::SealingsGet()
+{
+    bool* Sealings = new bool[2];
+    Sealings[0] = ui->SealingLeft->isChecked();
+    Sealings[1] = ui->SealingRight->isChecked();
+    return Sealings;
 }
 
