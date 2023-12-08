@@ -9,6 +9,7 @@
 #include "QMessageBox"
 #include "validatedcellwidget.h"
 #include "QGraphicsRectItem"
+#include "myrect.h"
 Preproccessor::Preproccessor(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::Preproccessor)
@@ -52,37 +53,58 @@ void Preproccessor::RodsDrawer()
         x+= current_rod->rect().width();
         //if (max_h < current_rod->rect().height()) max_h = current_rod->rect().height();
     }//,max_h/2-Rod.areaGet()/2+100,Rod.lenghtGet(),Rod.areaGet()
-    RodsItems.emplace_back(scene->addRect(x,0,0,0));
+    RodsItems.emplace_back(new MyRect(x));
+    scene->addItem(RodsItems.back());
+    NodesItems.emplace_back(scene->addEllipse(x-3,0,6,6));
+}
+void Preproccessor::ForceDrawer(double value, int row)
+{
+    //QGraphicsScene* scene = ui->RodsVewier->scene();
+    //QGraphicsRectItem* rod = RodsItems[row];
+    RodsItems[row]->ForceSignSet(value);
+}
+void Preproccessor::NodesDrawer()
+{
+    QGraphicsScene* scene = ui->RodsVewier->scene();
+
 }
 void Preproccessor::RodsModifier(int row,int column)
 {
     if(column == 0)
     {
 
-        double lenght = ui->RodsTable->item(row,0)->text().toDouble();
+        double lenght = ui->RodsTable->item(row,column)->text().toDouble();
         double dx = lenght - RodsItems[row]->rect().width();
         RodsItems[row]->setRect(RodsItems[row]->rect().left(),RodsItems[row]->rect().y(),lenght,RodsItems[row]->rect().height());
-
+        NodesItems[row+1]->setRect(RodsItems[row]->rect().left()+RodsItems[row]->rect().width()-3,-3,6,6);
         ++row;
         for(int rod_number = RodsItems.size();row < rod_number;++row)
         {
             RodsItems[row]->moveBy(dx,0);
+            NodesItems[row]->moveBy(dx,0);
         }
     }
     else if(column == 1)
     {
         double max_h = 0;
-        double area = ui->RodsTable->item(row,1)->text().toDouble();
-        for(QGraphicsRectItem* current_rod:RodsItems)
-        {
-            if (max_h < current_rod->rect().height()) max_h = current_rod->rect().height();
-        }
-        RodsItems[row]->setRect(RodsItems[row]->rect().left(),max_h/2-area/2+35,RodsItems[row]->rect().width(),area);
-        for(QGraphicsRectItem* current_rod:RodsItems)
-        {
-            current_rod->setRect(current_rod->rect().left(),max_h/2-current_rod->rect().height()/2+35,current_rod->rect().width(),current_rod->rect().height());
-        }
+        double area = ui->RodsTable->item(row,column)->text().toDouble();
+        //for(QGraphicsRectItem* current_rod:RodsItems)
+        //{
+        //    if (max_h < current_rod->rect().height()) max_h = current_rod->rect().height();
+        //}
+        RodsItems[row]->setRect(RodsItems[row]->rect().left(),-area/2,RodsItems[row]->rect().width(),area);
+        //for(QGraphicsRectItem* current_rod:RodsItems)
+        //{
+        //    current_rod->setRect(current_rod->rect().left(),-current_rod->rect().height()/2,current_rod->rect().width(),current_rod->rect().height());
+        //}
     }
+    else if(column == 2)
+        ;
+    else if (column == 3)
+    {
+        ForceDrawer(ui->RodsTable->item(row,column)->text().toDouble(),row);
+    }
+
 }
 Preproccessor::~Preproccessor()
 {
@@ -96,6 +118,7 @@ void Preproccessor::ExitButton_clicked()
 
 void Preproccessor::AddToRodsButton_clicked()
 {
+    if (NodesItems.empty()) NodesItems.emplace_back(ui->RodsVewier->scene()->addEllipse(-3,-3,6,6));
     RodsDrawer();
     ui->RodsTable->insertRow(ui->RodsTable->rowCount());
 

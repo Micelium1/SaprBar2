@@ -8,7 +8,12 @@ class Preproccessor;
 }
 class RodsTableDataStructure;
 class NodesTableDataStructure;
+
 class QGraphicsRectItem;
+class QGraphicsEllipseItem;
+class QGraphicsPolygonItem;
+class MyRect;
+
 class Preproccessor : public QDialog
 {
     Q_OBJECT
@@ -32,10 +37,11 @@ public:
 
     void RodsDrawer();
 
+    void NodesDrawer();
+
     void RodsModifier(int row, int column);
 
-    void NodePowerDrawer(int row);
-
+    void ForceDrawer(double value, int row);
 
     std::vector<RodsTableDataStructure>* RodsTableGet();
 
@@ -43,7 +49,11 @@ public:
 
     bool* SealingsGet();
 
-    std::vector<QGraphicsRectItem*> RodsItems;
+    std::vector<MyRect*> RodsItems;
+
+    std::vector<QGraphicsPolygonItem*> ForseItems;
+
+    std::vector<QGraphicsEllipseItem*> NodesItems;
 private:
 
     Ui::Preproccessor *ui;

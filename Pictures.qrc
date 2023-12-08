@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/resourse">
+        <file>Forces/BlueArrows.png</file>
+        <file>Forces/RedArrows.png</file>
+    </qresource>
+</RCC>

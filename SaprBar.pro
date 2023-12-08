@@ -11,12 +11,14 @@ CONFIG += static
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    myrect.cpp \
     preproccessor.cpp \
     processor.cpp \
     validatedcellwidget.cpp
 
 HEADERS += \
     mainwindow.h \
+    myrect.h \
     preproccessor.h \
     processor.h \
     validatedcellwidget.h
@@ -30,3 +32,11 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    Красный стрелочки.png \
+    Красный стрелочки.png \
+    Синий стрелочки.png
+
+RESOURCES += \
+    Pictures.qrc
