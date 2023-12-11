@@ -2,5 +2,7 @@
     <qresource prefix="/resourse">
         <file>Forces/BlueArrows.png</file>
         <file>Forces/RedArrows.png</file>
+        <file>Sealings/SealingLeft.png</file>
+        <file>Sealings/SealingRight.png</file>
     </qresource>
 </RCC>

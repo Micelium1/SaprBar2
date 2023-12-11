@@ -19,7 +19,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_PreprocessorButton_clicked()
 {
     hide();
-    Preproccessor Window;
+    Preproccessor Window(RodsTable,NodesTable,Sealings);//RodsTable,NodesTable,Sealings
     Window.exec();
     if (RodsTable) delete RodsTable;
     if (NodesTable) delete NodesTable;

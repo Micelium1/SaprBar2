@@ -6,6 +6,7 @@
 
 MyRect::MyRect(double x,QGraphicsItem *parent) :QGraphicsRectItem(x,0,0,0,parent)
 {
+    setZValue(-1);
 }
 
 void MyRect::paint(QPainter * painter,   const QStyleOptionGraphicsItem * option,   QWidget * widget)
@@ -13,12 +14,12 @@ void MyRect::paint(QPainter * painter,   const QStyleOptionGraphicsItem * option
     if (force_sign == 1)
     {
         const static QPixmap red_arrows_pix(":resourse/Forces/RedArrows.png");
-        painter->drawPixmap(rect(),red_arrows_pix,QRectF(red_arrows_pix.rect()));
+        painter->drawPixmap(QRectF(rect().x()+3,rect().y(),rect().width(),rect().height()-3),red_arrows_pix,QRectF(red_arrows_pix.rect()));
     }
     else if (force_sign == -1)
     {
         const static QPixmap blue_arrows_pix(":resourse/Forces/BlueArrows.png");
-        painter->drawPixmap(rect(),blue_arrows_pix,QRectF(blue_arrows_pix.rect()));
+        painter->drawPixmap(QRectF(rect().x()+3,rect().y(),rect().width(),rect().height()-3),blue_arrows_pix,QRectF(blue_arrows_pix.rect()));
     }
     QGraphicsRectItem::paint(painter, option, widget);
 }

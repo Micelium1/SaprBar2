@@ -1,6 +1,7 @@
 #ifndef PREPROCCESSOR_H
 #define PREPROCCESSOR_H
 
+#include "sealing.h"
 #include <QDialog>
 
 namespace Ui {
@@ -13,13 +14,14 @@ class QGraphicsRectItem;
 class QGraphicsEllipseItem;
 class QGraphicsPolygonItem;
 class MyRect;
+class Node;
 
 class Preproccessor : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Preproccessor(QWidget *parent = nullptr);
+    explicit Preproccessor(const std::vector<RodsTableDataStructure>* _RodsTable, const std::vector<NodesTableDataStructure>* _NodesTable, bool* Sealings,QDialog *parent = nullptr);
     ~Preproccessor();
 
 
@@ -37,11 +39,15 @@ public:
 
     void RodsDrawer();
 
-    void NodesDrawer();
+    void RodsDeleter(int row);
+
+    void NodesForcesDrawer(int row,int column);
 
     void RodsModifier(int row, int column);
 
     void ForceDrawer(double value, int row);
+
+    QPolygonF ForceLine(double x,double value);
 
     std::vector<RodsTableDataStructure>* RodsTableGet();
 
@@ -51,9 +57,13 @@ public:
 
     std::vector<MyRect*> RodsItems;
 
-    std::vector<QGraphicsPolygonItem*> ForseItems;
+    std::vector<Node*> NodesItems;
 
-    std::vector<QGraphicsEllipseItem*> NodesItems;
+    Sealing* SealingItems[2];
+
+
+
+
 private:
 
     Ui::Preproccessor *ui;
@@ -67,7 +77,7 @@ public:
     double lenghtGet() const;
     double areaGet() const;
     double E_constGet() const;
-    double forseGet() const;
+    double forceGet() const;
     double allowedTensionGet() const;
 };
 class NodesTableDataStructure

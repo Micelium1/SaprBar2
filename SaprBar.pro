@@ -12,15 +12,19 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     myrect.cpp \
+    node.cpp \
     preproccessor.cpp \
     processor.cpp \
+    sealing.cpp \
     validatedcellwidget.cpp
 
 HEADERS += \
     mainwindow.h \
     myrect.h \
+    node.h \
     preproccessor.h \
     processor.h \
+    sealing.h \
     validatedcellwidget.h
 
 FORMS += \

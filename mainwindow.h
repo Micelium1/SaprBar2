@@ -26,5 +26,6 @@ private:
     std::vector<RodsTableDataStructure>* RodsTable = nullptr;
     std::vector<NodesTableDataStructure>* NodesTable = nullptr;
     bool* Sealings = nullptr;
+    double** vectorDelta;
 };
 #endif // MAINWINDOW_H

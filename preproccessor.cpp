@@ -1,4 +1,5 @@
 #include "preproccessor.h"
+#include "node.h"
 #include "ui_preproccessor.h"
 #include "QDebug"
 #include "QJsonDocument"
@@ -10,12 +11,12 @@
 #include "validatedcellwidget.h"
 #include "QGraphicsRectItem"
 #include "myrect.h"
-Preproccessor::Preproccessor(QWidget *parent) :
+#include <math.h>
+Preproccessor::Preproccessor(const std::vector<RodsTableDataStructure>* _RodsTable, const std::vector<NodesTableDataStructure>* _NodesTable, bool* Sealings,QDialog *parent) :
     QDialog(parent),
     ui(new Ui::Preproccessor)
 {
     ui->setupUi(this);
-
     for (int index = 0,ColumCount = ui->RodsTable->columnCount();index < ColumCount;++index)
     {
     switch (index)
@@ -30,11 +31,60 @@ Preproccessor::Preproccessor(QWidget *parent) :
         ui->RodsTable->setItemDelegateForColumn(index,new ValidatedCellWidget(ui->RodsTable,true));
         break;
     }
+
     }
+
     }
     QGraphicsScene* scene = new QGraphicsScene(ui->RodsVewier);
     ui->RodsVewier->setScene(scene);
     ui->NodesTable->setItemDelegateForColumn(0,new ValidatedCellWidget(ui->NodesTable));
+    SealingItems[0] = new Sealing(true);
+    SealingItems[1] = new Sealing(false);
+    scene->addItem(SealingItems[0]);
+    scene->addItem(SealingItems[1]);
+    if (_RodsTable)
+    {
+        for(const RodsTableDataStructure& Iter:*_RodsTable)
+        {
+            RodsDrawer();
+            int row = ui->RodsTable->rowCount();
+            ui->RodsTable->insertRow(row);
+
+            ui->RodsTable->setItem(row,0,new QTableWidgetItem(QString::number(Iter.lenghtGet())));
+            RodsModifier(row,0);
+            ui->RodsTable->setItem(row,1,new QTableWidgetItem(QString::number(Iter.areaGet())));
+            RodsModifier(row,1);
+            ui->RodsTable->setItem(row,2,new QTableWidgetItem(QString::number(Iter.E_constGet())));
+            RodsModifier(row,2);
+            ui->RodsTable->setItem(row,3,new QTableWidgetItem(QString::number(Iter.forceGet())));
+            RodsModifier(row,3);
+            ui->RodsTable->setItem(row,4,new QTableWidgetItem(QString::number(Iter.allowedTensionGet())));
+            RodsModifier(row,4);
+        }
+    }
+    if (_NodesTable)
+    {
+    for(const NodesTableDataStructure& Iter:*_NodesTable)
+    {
+        int row = ui->NodesTable->rowCount();
+        ui->NodesTable->insertRow(row);
+
+        ui->NodesTable->setItem(row,0,new QTableWidgetItem(QString::number(Iter.nodeForseGet())));
+        NodesForcesDrawer(row,0);
+    }
+    }
+    if (Sealings)
+    {
+    ui->SealingLeft->setChecked(Sealings[0]);
+    ui->SealingRight->setChecked(Sealings[1]);
+    }
+    if (!RodsItems.empty())
+    {
+        qDebug("flexing");
+        qDebug("x: %f,y: %f, widht: %f, height: %f",SealingItems[0]->pos().x(),SealingItems[0]->pos().y(),SealingItems[0]->rect().width(),SealingItems[0]->rect().height());
+        qDebug("x: %f,y: %f, widht: %f, height: %f",SealingItems[1]->pos().x(),SealingItems[1]->pos().y(),SealingItems[1]->rect().width(),SealingItems[1]->rect().height());
+        qDebug("x: %f,y: %f, widht: %f, height: %f",RodsItems.back()->pos().x(),RodsItems.back()->pos().y(),RodsItems.back()->rect().width(),RodsItems.back()->rect().height());
+    }
     connect(ui->ExitButton,&QPushButton::clicked, this,&Preproccessor::ExitButton_clicked);
     connect(ui->AddToRodsButton,&QPushButton::clicked,this,&Preproccessor::AddToRodsButton_clicked);
     connect(ui->DeleteFromRodsButton,&QPushButton::clicked,this,&Preproccessor::DeleteFromRodsButton_clicked);
@@ -43,11 +93,13 @@ Preproccessor::Preproccessor(QWidget *parent) :
     connect(ui->SealingLeft,&QCheckBox::clicked,this,&Preproccessor::NonSealingDefence);
     connect(ui->SealingRight,&QCheckBox::clicked,this,&Preproccessor::NonSealingDefence);
     connect(ui->RodsTable,&QTableWidget::cellChanged,this,&Preproccessor::RodsModifier);
+    connect(ui->NodesTable,&QTableWidget::cellChanged,this,&Preproccessor::NodesForcesDrawer);
 }
 void Preproccessor::RodsDrawer()
 {
     QGraphicsScene* scene = ui->RodsVewier->scene();
     double x = 0;
+
     for(QGraphicsRectItem* current_rod:RodsItems)
     {
         x+= current_rod->rect().width();
@@ -55,48 +107,72 @@ void Preproccessor::RodsDrawer()
     }//,max_h/2-Rod.areaGet()/2+100,Rod.lenghtGet(),Rod.areaGet()
     RodsItems.emplace_back(new MyRect(x));
     scene->addItem(RodsItems.back());
-    NodesItems.emplace_back(scene->addEllipse(x-3,0,6,6));
+    //qDebug("Палку добавили");
+    if (NodesItems.empty())
+    {
+        NodesItems.emplace_back(new Node(x));
+        scene->addItem(NodesItems.back());
+    }
+    NodesItems.emplace_back(new Node(x));
+    scene->addItem(NodesItems.back());
+    //qDebug("Узел добавили");
+
 }
 void Preproccessor::ForceDrawer(double value, int row)
 {
-    //QGraphicsScene* scene = ui->RodsVewier->scene();
-    //QGraphicsRectItem* rod = RodsItems[row];
+
     RodsItems[row]->ForceSignSet(value);
 }
-void Preproccessor::NodesDrawer()
+void Preproccessor::NodesForcesDrawer(int row,int column)
 {
     QGraphicsScene* scene = ui->RodsVewier->scene();
+    qDebug("Дошли до установки силы");
+    NodesItems[row]->SetForce(ui->NodesTable->item(row,column)->text().toDouble());
 
+    // for(Node* current_node:NodesItems)
+    // {
+    //     qDebug("Node: %f, %f;\n",current_node->rect().left(),current_node->rect().right());
+    //     qDebug("Node pos: %f, %f;\n",current_node->pos().x(),current_node->pos().y());
+
+    // }
 }
 void Preproccessor::RodsModifier(int row,int column)
 {
     if(column == 0)
     {
-
         double lenght = ui->RodsTable->item(row,column)->text().toDouble();
+        if (lenght < 1) lenght = 1;
+        lenght = 140 * log(10*lenght)/log(20);
         double dx = lenght - RodsItems[row]->rect().width();
         RodsItems[row]->setRect(RodsItems[row]->rect().left(),RodsItems[row]->rect().y(),lenght,RodsItems[row]->rect().height());
-        NodesItems[row+1]->setRect(RodsItems[row]->rect().left()+RodsItems[row]->rect().width()-3,-3,6,6);
-        ++row;
+        SealingItems[1]->moveBy(dx,0);
         for(int rod_number = RodsItems.size();row < rod_number;++row)
         {
-            RodsItems[row]->moveBy(dx,0);
-            NodesItems[row]->moveBy(dx,0);
+            NodesItems[row+1]->moveBy(dx,0);
+
+            if (row + 1 == rod_number)
+            {
+                break;
+            }
+            RodsItems[row+1]->moveBy(dx,0);
         }
     }
     else if(column == 1)
     {
-        double max_h = 0;
-        double area = ui->RodsTable->item(row,column)->text().toDouble();
-        //for(QGraphicsRectItem* current_rod:RodsItems)
-        //{
-        //    if (max_h < current_rod->rect().height()) max_h = current_rod->rect().height();
-        //}
+        double area =ui->RodsTable->item(row,column)->text().toDouble();
+        if (area < 1) area = 1;
+        area = 280 * log(10*area)/log(1000);
+        double max_h = area;
+        for(MyRect* current_rod:RodsItems)
+        {
+            max_h = qMax(max_h,current_rod->rect().height());
+        }
+
         RodsItems[row]->setRect(RodsItems[row]->rect().left(),-area/2,RodsItems[row]->rect().width(),area);
-        //for(QGraphicsRectItem* current_rod:RodsItems)
-        //{
-        //    current_rod->setRect(current_rod->rect().left(),-current_rod->rect().height()/2,current_rod->rect().width(),current_rod->rect().height());
-        //}
+
+        SealingItems[0]->setRect(SealingItems[0]->rect().x(),-max_h/2,SealingItems[0]->rect().width(),max_h);
+        SealingItems[1]->setRect(SealingItems[1]->rect().x(),-max_h/2,SealingItems[1]->rect().width(),max_h);
+        qDebug("y cord1: %f,y cord2 %f, max_h %f",SealingItems[0]->rect().y(),SealingItems[1]->rect().y(),max_h);
     }
     else if(column == 2)
         ;
@@ -105,7 +181,29 @@ void Preproccessor::RodsModifier(int row,int column)
         ForceDrawer(ui->RodsTable->item(row,column)->text().toDouble(),row);
     }
 
+
 }
+
+void Preproccessor::RodsDeleter(int row)
+{
+    double dx = -RodsItems[row]->rect().width();
+    for(int rod_number = RodsItems.size(),current_row = row;current_row < rod_number;++current_row)
+    {
+        NodesItems[current_row+1]->moveBy(dx,0);
+
+        if (current_row + 1 == rod_number)
+        {
+            break;
+        }
+        RodsItems[current_row+1]->moveBy(dx,0);
+    }
+    delete RodsItems[row];
+    delete NodesItems[row+1];
+    RodsItems.erase(RodsItems.begin()+row);
+    NodesItems.erase(NodesItems.begin()+row + 1);
+
+}
+
 Preproccessor::~Preproccessor()
 {
     delete ui;
@@ -118,7 +216,6 @@ void Preproccessor::ExitButton_clicked()
 
 void Preproccessor::AddToRodsButton_clicked()
 {
-    if (NodesItems.empty()) NodesItems.emplace_back(ui->RodsVewier->scene()->addEllipse(-3,-3,6,6));
     RodsDrawer();
     ui->RodsTable->insertRow(ui->RodsTable->rowCount());
 
@@ -149,6 +246,7 @@ void Preproccessor::DeleteFromRodsButton_clicked()
     QList<QTableWidgetSelectionRange> DeletingObject = ui->RodsTable->selectedRanges();
     if (DeletingObject.isEmpty())
     {
+        RodsDeleter(RodsCount-1);
         ui->RodsTable->removeRow(RodsCount-1);
         ui->NodesTable->removeRow(RodsCount);
     }
@@ -158,6 +256,7 @@ void Preproccessor::DeleteFromRodsButton_clicked()
         {
             for(int Iter = CurrentRange.bottomRow();Iter >= CurrentRange.topRow();--Iter)
             {
+                RodsDeleter(Iter);
                 ui->RodsTable->removeRow(Iter);
                 ui->NodesTable->removeRow(Iter+1);
             }
@@ -167,7 +266,10 @@ void Preproccessor::DeleteFromRodsButton_clicked()
     if (ui->NodesTable->rowCount() == 1)
     {
         ui->NodesTable->removeRow(0);
+        delete NodesItems[0];
+        NodesItems.erase(NodesItems.begin());
     }
+    //qDebug("Nodes: %i",NodesItems.size());
 
 }
 
@@ -228,6 +330,21 @@ void Preproccessor::LoadFromFileButton_clicked()
     QJsonObject Sealings = Data["Sealings"].toObject();
 
     JsonFile.close();
+
+    ui->RodsTable->setRowCount(0);
+    for(const QJsonValueRef& Iter: AboutToDeserializeRods)
+    {
+        RodsDrawer();
+        QJsonObject Object(Iter.toObject());
+        ui->RodsTable->insertRow(ui->RodsTable->rowCount());
+
+        for (int IterColumn = ui->RodsTable->columnCount() - 1;IterColumn >= 0; --IterColumn )
+        {
+
+           QTableWidgetItem* Item = new QTableWidgetItem(Object[ui->RodsTable->horizontalHeaderItem(IterColumn)->text()].toString());
+           ui->RodsTable->setItem(ui->RodsTable->rowCount()-1,IterColumn,Item);
+        }
+    }
     ui->NodesTable->setRowCount(0);
     for(const QJsonValueRef& Iter: AboutToDeserialize)
     {
@@ -236,20 +353,8 @@ void Preproccessor::LoadFromFileButton_clicked()
         for (int IterColumn = ui->NodesTable->columnCount() - 1;IterColumn >= 0; --IterColumn )
         {
 
-           QTableWidgetItem* Item = new QTableWidgetItem(Object[ui->NodesTable->horizontalHeaderItem(IterColumn)->text()].toString());
-           ui->NodesTable->setItem(ui->NodesTable->rowCount()-1,IterColumn,Item);
-        }
-    }
-    ui->RodsTable->setRowCount(0);
-    for(const QJsonValueRef& Iter: AboutToDeserializeRods)
-    {
-        QJsonObject Object(Iter.toObject());
-        ui->RodsTable->insertRow(ui->RodsTable->rowCount());
-        for (int IterColumn = ui->RodsTable->columnCount() - 1;IterColumn >= 0; --IterColumn )
-        {
-
-           QTableWidgetItem* Item = new QTableWidgetItem(Object[ui->RodsTable->horizontalHeaderItem(IterColumn)->text()].toString());
-           ui->RodsTable->setItem(ui->RodsTable->rowCount()-1,IterColumn,Item);
+            QTableWidgetItem* Item = new QTableWidgetItem(Object[ui->NodesTable->horizontalHeaderItem(IterColumn)->text()].toString());
+            ui->NodesTable->setItem(ui->NodesTable->rowCount()-1,IterColumn,Item);
         }
     }
     ui->SealingLeft->setChecked(Sealings["SealingLeft"].toBool());
@@ -284,13 +389,17 @@ double RodsTableDataStructure::areaGet() const
 {
     return area;
 }
-double RodsTableDataStructure::forseGet() const
+double RodsTableDataStructure::forceGet() const
 {
     return forse;
 }
 double RodsTableDataStructure::allowedTensionGet() const
 {
     return allowed_tension;
+}
+double RodsTableDataStructure::E_constGet() const
+{
+    return E_const;
 }
 NodesTableDataStructure::NodesTableDataStructure(double _node_forse)
 {

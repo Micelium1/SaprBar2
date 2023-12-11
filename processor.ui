@@ -13,61 +13,55 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QTableWidget" name="tableWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>201</x>
-     <y>9</y>
-     <width>185</width>
-     <height>444</height>
-    </rect>
-   </property>
-   <column>
-    <property name="text">
-     <string>b</string>
-    </property>
-   </column>
-  </widget>
-  <widget class="QTableWidget" name="tableWidget_3">
-   <property name="geometry">
-    <rect>
-     <x>392</x>
-     <y>9</y>
-     <width>184</width>
-     <height>444</height>
-    </rect>
-   </property>
-   <column>
-    <property name="text">
-     <string>delta</string>
-    </property>
-   </column>
-  </widget>
-  <widget class="QWidget" name="">
-   <property name="geometry">
-    <rect>
-     <x>9</x>
-     <y>9</y>
-     <width>186</width>
-     <height>444</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLabel" name="label">
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Матрица A</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="matrixATable"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="vectorBTable">
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <column>
       <property name="text">
-       <string>Матрица A</string>
+       <string>b</string>
       </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="vectorDeltaTable">
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <column>
+      <property name="text">
+       <string>delta</string>
       </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QTableWidget" name="tableWidget"/>
-    </item>
-   </layout>
-  </widget>
+     </column>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
