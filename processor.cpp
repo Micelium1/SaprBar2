@@ -6,13 +6,12 @@ Processor::Processor(const std::vector<RodsTableDataStructure>* RodsTable,const 
 {
     ui->setupUi(this);
     int nodes_amount = NodesTable->size();
+    int rods_amount = nodes_amount - 1;
     double** matrixA = MatrixACalculator(RodsTable,Sealings);
     double* vectorB = VectorBCalculator(RodsTable,NodesTable,Sealings);
     vectorDelta = VectorDeltaCalculator(matrixA,vectorB,nodes_amount);
-    //for (const RodsTableDataStructure& current_rod:*RodsTable)
-    //    qDebug("lenght: %f\narea: %f\nE_const: %f\n",current_rod.lenghtGet(),current_rod.areaGet(),current_rod.E_constGet());
-    //for (unsigned int i = 0;i < NodesTable->size();++i)
-    //    qDebug("node_force: %f",(*NodesTable)[i].nodeForseGet());
+    vectorNx = VectorNxCalculator(vectorDelta,RodsTable);
+    vectorUx = VectorUxCalculator(vectorDelta,RodsTable);
     ui->matrixATable->setRowCount(nodes_amount);
     ui->matrixATable->setColumnCount(nodes_amount);
     ui->vectorBTable->setRowCount(nodes_amount);
@@ -25,10 +24,20 @@ Processor::Processor(const std::vector<RodsTableDataStructure>* RodsTable,const 
         }
         ui->vectorBTable->setItem(row,0,new QTableWidgetItem(QString::number(vectorB[row])));
         ui->vectorDeltaTable->setItem(row,0,new QTableWidgetItem(QString::number(vectorDelta[row])));
+
         delete[] matrixA[row];
+    }
+    ui->vectorNx->setColumnCount(rods_amount);
+    ui->vectorUx->setColumnCount(rods_amount);
+    for (int column = 0; column < rods_amount;++column)
+    {
+        ui->vectorNx->setItem(0,column,new QTableWidgetItem((*vectorNx)[column].print()));
+        ui->vectorUx->setItem(0,column,new QTableWidgetItem((*vectorUx)[column].print()));
     }
     delete[] matrixA;
     delete[] vectorB;
+    delete[] vectorDelta;
+    connect(ui->ExitButton,&QPushButton::clicked, this,&Processor::ExitButton_clicked);
 }
 Processor::~Processor()
 {
@@ -49,12 +58,12 @@ double** Processor::MatrixACalculator(const std::vector<RodsTableDataStructure>*
     }
     for (int bar = 0; bar < rods_amount;++bar)
     {
-        if (bar == 1) qDebug("E_const: %f; area: %f; lenght: %f",(*RodsTable)[bar].E_constGet(), (*RodsTable)[bar].areaGet(), (*RodsTable)[bar].lenghtGet());
+
         matrixA[bar][bar] += (*RodsTable)[bar].E_constGet() * (*RodsTable)[bar].areaGet() / (*RodsTable)[bar].lenghtGet();
         matrixA[bar][bar+1] += -(*RodsTable)[bar].E_constGet() * (*RodsTable)[bar].areaGet() / (*RodsTable)[bar].lenghtGet();
         matrixA[bar+1][bar] += -(*RodsTable)[bar].E_constGet() * (*RodsTable)[bar].areaGet() / (*RodsTable)[bar].lenghtGet();
         matrixA[bar+1][bar+1] += (*RodsTable)[bar].E_constGet() * (*RodsTable)[bar].areaGet() / (*RodsTable)[bar].lenghtGet();
-        if (bar == 1) qDebug("22: %f,23: %f\n32: %f,33: %f",matrixA[bar][bar],matrixA[bar][bar+1],matrixA[bar+1][bar],matrixA[bar+1][bar+1]);
+
     }
     if (Sealings[0])
     {
@@ -67,14 +76,6 @@ double** Processor::MatrixACalculator(const std::vector<RodsTableDataStructure>*
         matrixA[matrix_size - 1][matrix_size - 1] = 1;
         matrixA[matrix_size - 1][matrix_size - 2] = 0;
         matrixA[matrix_size - 2][matrix_size - 1] = 0;
-    }
-    for (int row = 0;row < matrix_size;++row) //для каждой строки создаем массив столбцов
-    {
-        for (int column = 0;column < matrix_size;++column)
-        {
-            qDebug("%f ",matrixA[row][column]);
-        }
-        qDebug("\n");
     }
     return matrixA;
 }
@@ -147,3 +148,44 @@ double* Processor::VectorDeltaCalculator(double** matrixA, double* vectorB, int 
     return x;
 }
 
+std::vector<MyFunc>* Processor::VectorNxCalculator(double* delta,const std::vector<RodsTableDataStructure>* RodsTable)
+{
+    std::vector<MyFunc>* vectorNx = new std::vector<MyFunc>();
+    for (unsigned int rod_id = 0;rod_id < RodsTable->size();++rod_id)
+    {
+        double lenght = (*RodsTable)[rod_id].lenghtGet();
+        double area = (*RodsTable)[rod_id].areaGet();
+        double E_const = (*RodsTable)[rod_id].E_constGet();
+        double force = (*RodsTable)[rod_id].forceGet();
+        vectorNx->emplace_back(MyFunc(-force,E_const * area / lenght *(delta[rod_id+1]-delta[rod_id])+force * lenght / 2));
+    }
+    return vectorNx;
+}
+std::vector<MyFunc>* Processor::VectorUxCalculator(double* delta,const std::vector<RodsTableDataStructure>* RodsTable)
+{
+    std::vector<MyFunc>* vectorUx = new std::vector<MyFunc>();
+    for (unsigned int rod_id = 0;rod_id < RodsTable->size();++rod_id)
+    {
+        double lenght = (*RodsTable)[rod_id].lenghtGet();
+        double area = (*RodsTable)[rod_id].areaGet();
+        double E_const = (*RodsTable)[rod_id].E_constGet();
+        double force = (*RodsTable)[rod_id].forceGet();
+        vectorUx->emplace_back(MyFunc(-force/(2 * E_const * area),(delta[rod_id+1]-delta[rod_id])/lenght + force * lenght/(2 * E_const * area),delta[rod_id]));
+    }
+    return vectorUx;
+}
+
+std::vector<MyFunc> *Processor::GetvectorNx()
+{
+    return vectorNx;
+}
+
+std::vector<MyFunc> *Processor::GetvectorUx()
+{
+    return vectorUx;
+}
+
+void Processor::ExitButton_clicked()
+{
+    this->close();
+}

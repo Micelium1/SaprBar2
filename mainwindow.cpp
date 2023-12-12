@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "preproccessor.h"
 #include "processor.h"
+#include "postprocessor.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -42,7 +43,17 @@ void MainWindow::on_ProcessorButton_clicked()
     hide();
     Processor Window(RodsTable,NodesTable,Sealings);
     Window.exec();
+    vectorNx = Window.GetvectorNx();
+    vectorUx = Window.GetvectorUx();
+    show();
+}
 
+
+void MainWindow::on_PostProcessorButton_clicked()
+{
+    hide();
+    Postprocessor Window(RodsTable,NodesTable,Sealings,vectorNx,vectorUx);
+    Window.exec();
     show();
 }
 

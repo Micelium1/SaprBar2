@@ -6,7 +6,7 @@
 
 MyRect::MyRect(double x,QGraphicsItem *parent) :QGraphicsRectItem(x,0,0,0,parent)
 {
-    setZValue(-1);
+    setZValue(-2);
 }
 
 void MyRect::paint(QPainter * painter,   const QStyleOptionGraphicsItem * option,   QWidget * widget)

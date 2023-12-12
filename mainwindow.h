@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "myfunc.h"
 #include "preproccessor.h"
 #include <QMainWindow>
 
@@ -21,11 +22,14 @@ private slots:
 
     void on_ProcessorButton_clicked();
 
+    void on_PostProcessorButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     std::vector<RodsTableDataStructure>* RodsTable = nullptr;
     std::vector<NodesTableDataStructure>* NodesTable = nullptr;
     bool* Sealings = nullptr;
-    double** vectorDelta;
+    std::vector<MyFunc>* vectorNx;
+    std::vector<MyFunc>* vectorUx;
 };
 #endif // MAINWINDOW_H

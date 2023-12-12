@@ -80,10 +80,7 @@ Preproccessor::Preproccessor(const std::vector<RodsTableDataStructure>* _RodsTab
     }
     if (!RodsItems.empty())
     {
-        qDebug("flexing");
-        qDebug("x: %f,y: %f, widht: %f, height: %f",SealingItems[0]->pos().x(),SealingItems[0]->pos().y(),SealingItems[0]->rect().width(),SealingItems[0]->rect().height());
-        qDebug("x: %f,y: %f, widht: %f, height: %f",SealingItems[1]->pos().x(),SealingItems[1]->pos().y(),SealingItems[1]->rect().width(),SealingItems[1]->rect().height());
-        qDebug("x: %f,y: %f, widht: %f, height: %f",RodsItems.back()->pos().x(),RodsItems.back()->pos().y(),RodsItems.back()->rect().width(),RodsItems.back()->rect().height());
+
     }
     connect(ui->ExitButton,&QPushButton::clicked, this,&Preproccessor::ExitButton_clicked);
     connect(ui->AddToRodsButton,&QPushButton::clicked,this,&Preproccessor::AddToRodsButton_clicked);
@@ -103,11 +100,9 @@ void Preproccessor::RodsDrawer()
     for(QGraphicsRectItem* current_rod:RodsItems)
     {
         x+= current_rod->rect().width();
-        //if (max_h < current_rod->rect().height()) max_h = current_rod->rect().height();
-    }//,max_h/2-Rod.areaGet()/2+100,Rod.lenghtGet(),Rod.areaGet()
+    }
     RodsItems.emplace_back(new MyRect(x));
     scene->addItem(RodsItems.back());
-    //qDebug("Палку добавили");
     if (NodesItems.empty())
     {
         NodesItems.emplace_back(new Node(x));
@@ -115,7 +110,6 @@ void Preproccessor::RodsDrawer()
     }
     NodesItems.emplace_back(new Node(x));
     scene->addItem(NodesItems.back());
-    //qDebug("Узел добавили");
 
 }
 void Preproccessor::ForceDrawer(double value, int row)
@@ -125,22 +119,13 @@ void Preproccessor::ForceDrawer(double value, int row)
 }
 void Preproccessor::NodesForcesDrawer(int row,int column)
 {
-    QGraphicsScene* scene = ui->RodsVewier->scene();
-    qDebug("Дошли до установки силы");
-    NodesItems[row]->SetForce(ui->NodesTable->item(row,column)->text().toDouble());
-
-    // for(Node* current_node:NodesItems)
-    // {
-    //     qDebug("Node: %f, %f;\n",current_node->rect().left(),current_node->rect().right());
-    //     qDebug("Node pos: %f, %f;\n",current_node->pos().x(),current_node->pos().y());
-
-    // }
+    NodesItems[row]->SetForce(ui->NodesTable->item(row,column)->text().replace(",",".").toDouble());
 }
 void Preproccessor::RodsModifier(int row,int column)
 {
     if(column == 0)
     {
-        double lenght = ui->RodsTable->item(row,column)->text().toDouble();
+        double lenght = ui->RodsTable->item(row,column)->text().replace(",",".").toDouble();
         if (lenght < 1) lenght = 1;
         lenght = 140 * log(10*lenght)/log(20);
         double dx = lenght - RodsItems[row]->rect().width();
@@ -159,7 +144,7 @@ void Preproccessor::RodsModifier(int row,int column)
     }
     else if(column == 1)
     {
-        double area =ui->RodsTable->item(row,column)->text().toDouble();
+        double area =ui->RodsTable->item(row,column)->text().replace(",",".").toDouble();
         if (area < 1) area = 1;
         area = 280 * log(10*area)/log(1000);
         double max_h = area;
@@ -172,13 +157,13 @@ void Preproccessor::RodsModifier(int row,int column)
 
         SealingItems[0]->setRect(SealingItems[0]->rect().x(),-max_h/2,SealingItems[0]->rect().width(),max_h);
         SealingItems[1]->setRect(SealingItems[1]->rect().x(),-max_h/2,SealingItems[1]->rect().width(),max_h);
-        qDebug("y cord1: %f,y cord2 %f, max_h %f",SealingItems[0]->rect().y(),SealingItems[1]->rect().y(),max_h);
+
     }
     else if(column == 2)
         ;
     else if (column == 3)
     {
-        ForceDrawer(ui->RodsTable->item(row,column)->text().toDouble(),row);
+        ForceDrawer(ui->RodsTable->item(row,column)->text().replace(",",".").toDouble(),row);
     }
 
 
@@ -373,48 +358,13 @@ void Preproccessor::NonSealingDefence(bool checked)
        ui->SealingLeft->setChecked(true);
     }
 }
-RodsTableDataStructure::RodsTableDataStructure(double _lenght, double _area,double _E_const, double _forse, double _allowed_tension)
-{
-    lenght = _lenght;
-    area = _area;
-    E_const = _E_const;
-    forse = _forse;
-    allowed_tension = _allowed_tension;
-}
-double RodsTableDataStructure::lenghtGet() const
-{
-    return lenght;
-}
-double RodsTableDataStructure::areaGet() const
-{
-    return area;
-}
-double RodsTableDataStructure::forceGet() const
-{
-    return forse;
-}
-double RodsTableDataStructure::allowedTensionGet() const
-{
-    return allowed_tension;
-}
-double RodsTableDataStructure::E_constGet() const
-{
-    return E_const;
-}
-NodesTableDataStructure::NodesTableDataStructure(double _node_forse)
-{
-    node_forse = _node_forse;
-}
-double NodesTableDataStructure::nodeForseGet() const
-{
-    return node_forse;
-}
+
 std::vector<RodsTableDataStructure>* Preproccessor::RodsTableGet()
 {
     std::vector<RodsTableDataStructure>* RodsTable = new std::vector<RodsTableDataStructure>;
     RodsTable->reserve(ui->RodsTable->rowCount());
     for (int current_row = 0,table_end = ui->RodsTable->rowCount();current_row < table_end;++current_row)
-        RodsTable->emplace_back(RodsTableDataStructure(ui->RodsTable->item(current_row,0)->text().toDouble(),ui->RodsTable->item(current_row,1)->text().toDouble(),ui->RodsTable->item(current_row,2)->text().toDouble(),ui->RodsTable->item(current_row,3)->text().toDouble(),ui->RodsTable->item(current_row,4)->text().toDouble()));
+        RodsTable->emplace_back(RodsTableDataStructure(ui->RodsTable->item(current_row,0)->text().replace(",",".").toDouble(),ui->RodsTable->item(current_row,1)->text().replace(",",".").toDouble(),ui->RodsTable->item(current_row,2)->text().replace(",",".").toDouble(),ui->RodsTable->item(current_row,3)->text().replace(",",".").toDouble(),ui->RodsTable->item(current_row,4)->text().replace(",",".").toDouble()));
     return RodsTable;
 }
 std::vector<NodesTableDataStructure>* Preproccessor::NodesTableGet()
@@ -422,7 +372,7 @@ std::vector<NodesTableDataStructure>* Preproccessor::NodesTableGet()
     std::vector<NodesTableDataStructure>* NodesTable = new std::vector<NodesTableDataStructure>;
     NodesTable->reserve(ui->NodesTable->rowCount());
     for (int current_row = 0,table_end = ui->NodesTable->rowCount();current_row < table_end;++current_row)
-        NodesTable->emplace_back(NodesTableDataStructure(ui->NodesTable->item(current_row,0)->text().toDouble()));
+        NodesTable->emplace_back(NodesTableDataStructure(ui->NodesTable->item(current_row,0)->text().replace(",",".").toDouble()));
     return NodesTable;
 }
 bool* Preproccessor::SealingsGet()

@@ -11,24 +11,31 @@ CONFIG += static
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    myfunc.cpp \
     myrect.cpp \
     node.cpp \
+    postprocessor.cpp \
     preproccessor.cpp \
     processor.cpp \
     sealing.cpp \
+    tablestructures.cpp \
     validatedcellwidget.cpp
 
 HEADERS += \
     mainwindow.h \
+    myfunc.h \
     myrect.h \
     node.h \
+    postprocessor.h \
     preproccessor.h \
     processor.h \
     sealing.h \
+    tablestructures.h \
     validatedcellwidget.h
 
 FORMS += \
     mainwindow.ui \
+    postprocessor.ui \
     preproccessor.ui \
     processor.ui
 

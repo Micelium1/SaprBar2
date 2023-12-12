@@ -13,52 +13,99 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Матрица A</string>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Матрица A</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTableWidget" name="matrixATable"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="vectorDeltaTable">
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
+       <column>
+        <property name="text">
+         <string>delta</string>
+        </property>
+       </column>
       </widget>
      </item>
      <item>
-      <widget class="QTableWidget" name="matrixATable"/>
+      <widget class="QTableWidget" name="vectorBTable">
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <column>
+        <property name="text">
+         <string>b</string>
+        </property>
+       </column>
+      </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QTableWidget" name="vectorBTable">
+    <widget class="QTableWidget" name="vectorNx">
      <property name="maximumSize">
       <size>
-       <width>100</width>
-       <height>16777215</height>
+       <width>16777215</width>
+       <height>55</height>
       </size>
      </property>
-     <column>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>125</number>
+     </attribute>
+     <row>
       <property name="text">
-       <string>b</string>
+       <string>N(x)</string>
       </property>
-     </column>
+     </row>
     </widget>
    </item>
    <item>
-    <widget class="QTableWidget" name="vectorDeltaTable">
+    <widget class="QTableWidget" name="vectorUx">
      <property name="maximumSize">
       <size>
-       <width>100</width>
-       <height>16777215</height>
+       <width>16777215</width>
+       <height>55</height>
       </size>
      </property>
-     <column>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>125</number>
+     </attribute>
+     <row>
       <property name="text">
-       <string>delta</string>
+       <string>U(x)</string>
       </property>
-     </column>
+     </row>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="ExitButton">
+     <property name="text">
+      <string>Выйти из процессора</string>
+     </property>
     </widget>
    </item>
   </layout>
