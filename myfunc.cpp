@@ -16,8 +16,7 @@ MyFunc::MyFunc(double _B,double _C)
 double MyFunc::value(double x) const
 {
     double val = A * (x * x) + B * x + C;
-
-    return qAbs(val) < qAbs((A+B+C)/3/1e10) ? 0 : val;
+    return qAbs(val) < 1/1e12 ? 0 : val;
 }
 
 double MyFunc::critical() const

@@ -34,6 +34,8 @@ void MainWindow::on_PreprocessorButton_clicked()
     Sealings = Window.SealingsGet();
     //qDebug("%i",Sealings[0]);
     //qDebug("%i",Sealings[1]);
+    nodes_header = Window.NodesHeaderGet();
+    rods_header = Window.RodsHeaderGet();
     show();
 }
 
@@ -52,7 +54,10 @@ void MainWindow::on_ProcessorButton_clicked()
 void MainWindow::on_PostProcessorButton_clicked()
 {
     hide();
-    Postprocessor Window(RodsTable,NodesTable,Sealings,vectorNx,vectorUx);
+    qDebug("Cheking header");
+    qDebug() << nodes_header[0];
+    qDebug() << rods_header;
+    Postprocessor Window(RodsTable,NodesTable,Sealings,vectorNx,vectorUx,rods_header,nodes_header);
     Window.exec();
     show();
 }

@@ -7,6 +7,7 @@ Sealing::Sealing(bool _left, QGraphicsItem *parent) : QGraphicsRectItem(parent)
     setRect(rect().x(),rect().y(),50,rect().height());
     if (left) moveBy(-50,0);
     setZValue(-1);
+    setPen(QPen(Qt::white));
 }
 
 
@@ -22,6 +23,6 @@ void Sealing::paint(QPainter * painter,   const QStyleOptionGraphicsItem * optio
         const static QPixmap sealing_right(":resourse/Sealings/SealingRight.png");
         painter->drawPixmap(QRectF(rect().x(),rect().y(),rect().width(),rect().height()-3),sealing_right,QRectF(sealing_right.rect()));
     }
-    painter->setPen(Qt::white);
+
     QGraphicsRectItem::paint(painter, option, widget);
 }

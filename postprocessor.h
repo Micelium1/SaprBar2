@@ -15,7 +15,7 @@ class Postprocessor : public QDialog
     Q_OBJECT
 
 public:
-    explicit Postprocessor(const std::vector<RodsTableDataStructure> *RodsTable, const std::vector<NodesTableDataStructure> *NodesTable, bool *Sealings,std::vector<MyFunc>* vectorNx,std::vector<MyFunc>* vectorUx, QDialog *parent = nullptr);
+    explicit Postprocessor(const std::vector<RodsTableDataStructure> *RodsTable, const std::vector<NodesTableDataStructure> *NodesTable, bool *Sealings,std::vector<MyFunc>* vectorNx,std::vector<MyFunc>* vectorUx,std::vector<QString> rods_header,std::vector<QString> nodes_header, QDialog *parent = nullptr);
 
     ~Postprocessor();
 
@@ -23,9 +23,9 @@ public:
 
     void ExitButton_clicked();
 
-    void RodSetted(QString rod_st);
-
     void InputChanged(QString Input);
+
+    void RodSetted(int rod);
 private:
     Ui::Postprocessor *ui;
 
@@ -38,6 +38,10 @@ private:
     std::vector<MyFunc>* vectorNx;
 
     std::vector<MyFunc>* vectorUx;
+
+    std::vector<QString> rods_header;
+
+    std::vector<QString> nodes_header;
 
     int actual_rod;
 

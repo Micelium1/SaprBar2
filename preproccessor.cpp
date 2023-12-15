@@ -375,6 +375,28 @@ std::vector<NodesTableDataStructure>* Preproccessor::NodesTableGet()
         NodesTable->emplace_back(NodesTableDataStructure(ui->NodesTable->item(current_row,0)->text().replace(",",".").toDouble()));
     return NodesTable;
 }
+
+std::vector<QString> Preproccessor::RodsHeaderGet()
+{
+    std::vector<QString> header;
+    int column_count = ui->RodsTable->columnCount();
+    for (int i = 0;i < column_count; ++i)
+    {
+        header.emplace_back(ui->RodsTable->horizontalHeaderItem(i)->text());
+    }
+
+    return header;
+}
+std::vector<QString> Preproccessor::NodesHeaderGet()
+{
+    std::vector<QString> header;
+    int column_count = ui->NodesTable->columnCount();
+    for (int i = 0;i < column_count; ++i)
+    {
+        header.emplace_back(ui->NodesTable->horizontalHeaderItem(i)->text());
+    }
+    return header;
+}
 bool* Preproccessor::SealingsGet()
 {
     bool* Sealings = new bool[2];

@@ -36,3 +36,4 @@ double NodesTableDataStructure::nodeForseGet() const
 {
     return node_forse;
 }
+

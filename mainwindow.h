@@ -2,8 +2,8 @@
 #define MAINWINDOW_H
 
 #include "myfunc.h"
-#include "preproccessor.h"
 #include <QMainWindow>
+#include "tablestructures.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -28,6 +28,8 @@ private:
     Ui::MainWindow *ui;
     std::vector<RodsTableDataStructure>* RodsTable = nullptr;
     std::vector<NodesTableDataStructure>* NodesTable = nullptr;
+    std::vector<QString> rods_header;
+    std::vector<QString> nodes_header;
     bool* Sealings = nullptr;
     std::vector<MyFunc>* vectorNx;
     std::vector<MyFunc>* vectorUx;

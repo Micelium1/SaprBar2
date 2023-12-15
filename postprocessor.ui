@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -113,6 +113,17 @@
       <attribute name="title">
        <string>Эпюры</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QGraphicsView" name="NxVeiw"/>
+       </item>
+       <item>
+        <widget class="QGraphicsView" name="StressVeiw"/>
+       </item>
+       <item>
+        <widget class="QGraphicsView" name="UxVeiw"/>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">

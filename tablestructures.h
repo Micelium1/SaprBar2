@@ -1,6 +1,7 @@
 #ifndef TABLESTRUCTURES_H
 #define TABLESTRUCTURES_H
 
+
 class RodsTableDataStructure
 {
 private:
@@ -21,5 +22,6 @@ public:
     NodesTableDataStructure(double _node_forse);
     double nodeForseGet() const;
 };
+
 
 #endif // TABESTRUCTURES_H

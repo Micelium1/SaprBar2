@@ -54,6 +54,10 @@ public:
 
     std::vector<NodesTableDataStructure>* NodesTableGet();
 
+    std::vector<QString> RodsHeaderGet();
+
+    std::vector<QString> NodesHeaderGet();
+
     bool* SealingsGet();
 
     std::vector<MyRect*> RodsItems;
