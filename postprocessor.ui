@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>653</width>
-    <height>595</height>
+    <width>925</width>
+    <height>785</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -115,10 +115,40 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Эпюра Nx</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QGraphicsView" name="NxVeiw"/>
        </item>
        <item>
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Эпюра напряжений</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QGraphicsView" name="StressVeiw"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Эпюра Ux</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QGraphicsView" name="UxVeiw"/>

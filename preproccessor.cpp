@@ -42,6 +42,8 @@ Preproccessor::Preproccessor(const std::vector<RodsTableDataStructure>* _RodsTab
     SealingItems[1] = new Sealing(false);
     scene->addItem(SealingItems[0]);
     scene->addItem(SealingItems[1]);
+    SealingItems[1]->setVisible(false);
+    SealingItems[0]->setVisible(false);
     if (_RodsTable)
     {
         for(const RodsTableDataStructure& Iter:*_RodsTable)
@@ -77,6 +79,8 @@ Preproccessor::Preproccessor(const std::vector<RodsTableDataStructure>* _RodsTab
     {
     ui->SealingLeft->setChecked(Sealings[0]);
     ui->SealingRight->setChecked(Sealings[1]);
+    SealingItems[0]->setVisible(Sealings[0]);
+    SealingItems[1]->setVisible(Sealings[1]);
     }
     if (!RodsItems.empty())
     {
@@ -107,6 +111,8 @@ void Preproccessor::RodsDrawer()
     {
         NodesItems.emplace_back(new Node(x));
         scene->addItem(NodesItems.back());
+        SealingItems[0]->setVisible(ui->SealingLeft->isChecked());
+        SealingItems[1]->setVisible(ui->SealingRight->isChecked());
     }
     NodesItems.emplace_back(new Node(x));
     scene->addItem(NodesItems.back());
@@ -182,6 +188,7 @@ void Preproccessor::RodsDeleter(int row)
         }
         RodsItems[current_row+1]->moveBy(dx,0);
     }
+    SealingItems[1]->moveBy(dx,0);
     delete RodsItems[row];
     delete NodesItems[row+1];
     RodsItems.erase(RodsItems.begin()+row);
@@ -253,8 +260,9 @@ void Preproccessor::DeleteFromRodsButton_clicked()
         ui->NodesTable->removeRow(0);
         delete NodesItems[0];
         NodesItems.erase(NodesItems.begin());
+        SealingItems[0]->setVisible(false);
+        SealingItems[1]->setVisible(false);
     }
-    //qDebug("Nodes: %i",NodesItems.size());
 
 }
 
@@ -315,7 +323,23 @@ void Preproccessor::LoadFromFileButton_clicked()
     QJsonObject Sealings = Data["Sealings"].toObject();
 
     JsonFile.close();
-
+    if (!RodsItems.empty())
+    {
+    for (MyRect* Iter:RodsItems)
+    {
+        delete Iter;
+    }
+    RodsItems.clear();
+    }
+    if (!NodesItems.empty())
+    {
+    for (Node* Iter:NodesItems)
+    {
+        delete Iter;
+    }
+    NodesItems.clear();
+    }
+    SealingItems[1]->setPos(0,0);
     ui->RodsTable->setRowCount(0);
     for(const QJsonValueRef& Iter: AboutToDeserializeRods)
     {
@@ -330,6 +354,7 @@ void Preproccessor::LoadFromFileButton_clicked()
            ui->RodsTable->setItem(ui->RodsTable->rowCount()-1,IterColumn,Item);
         }
     }
+
     ui->NodesTable->setRowCount(0);
     for(const QJsonValueRef& Iter: AboutToDeserialize)
     {
@@ -344,18 +369,54 @@ void Preproccessor::LoadFromFileButton_clicked()
     }
     ui->SealingLeft->setChecked(Sealings["SealingLeft"].toBool());
     ui->SealingRight->setChecked(Sealings["SealingRight"].toBool());
+    SealingItems[0]->setVisible(Sealings["SealingLeft"].toBool());
+    SealingItems[1]->setVisible(Sealings["SealingRight"].toBool());
 }
 
 void Preproccessor::NonSealingDefence(bool checked)
 {
-    if (checked) return;
+    if (checked)
+    {
+        if (!RodsItems.empty())
+        {
+        if (sender() == ui->SealingLeft)
+        {
+            SealingItems[0]->setVisible(true);
+        }
+        else
+        {
+            SealingItems[1] -> setVisible(true);
+        }
+        }
+        return;
+    }
+    else
+    {
+        if (sender() == ui->SealingLeft)
+        {
+            SealingItems[0]->setVisible(false);
+        }
+        else
+        {
+            SealingItems[1] -> setVisible(false);
+        }
+    }
     if (sender() == ui->SealingLeft && !ui->SealingRight->isChecked())
     {
         ui->SealingRight->setChecked(true);
+        if (!NodesItems.empty())
+        {
+            SealingItems[1] -> setVisible(true);
+        }
+
     }
     else if (sender() == ui->SealingRight && !ui->SealingLeft->isChecked())
     {
        ui->SealingLeft->setChecked(true);
+        if (!NodesItems.empty())
+        {
+            SealingItems[0] -> setVisible(true);
+        }
     }
 }
 
