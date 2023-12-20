@@ -31,7 +31,7 @@ private:
     std::vector<QString> rods_header;
     std::vector<QString> nodes_header;
     bool* Sealings = nullptr;
-    std::vector<MyFunc>* vectorNx;
-    std::vector<MyFunc>* vectorUx;
+    std::vector<MyFunc>* vectorNx = nullptr;
+    std::vector<MyFunc>* vectorUx = nullptr;
 };
 #endif // MAINWINDOW_H

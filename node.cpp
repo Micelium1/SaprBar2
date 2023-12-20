@@ -6,7 +6,7 @@
 Node::Node(double x,QGraphicsItem *parent) : QGraphicsEllipseItem(-3,-3,6,6,parent)
 {
     setPos(x,0);
-    force = nullptr;
+    setZValue(5);
 }
 
 void Node::SetForce(double value)

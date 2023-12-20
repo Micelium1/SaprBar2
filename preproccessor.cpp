@@ -132,6 +132,7 @@ void Preproccessor::RodsModifier(int row,int column)
     if(column == 0)
     {
         double lenght = ui->RodsTable->item(row,column)->text().replace(",",".").toDouble();
+        ui->RodsTable->item(row,column)->setForeground(QBrush(lenght == 0 ? Qt::red : Qt::black));
         if (lenght < 1) lenght = 1;
         lenght = 140 * log(10*lenght)/log(20);
         double dx = lenght - RodsItems[row]->rect().width();
@@ -151,6 +152,7 @@ void Preproccessor::RodsModifier(int row,int column)
     else if(column == 1)
     {
         double area =ui->RodsTable->item(row,column)->text().replace(",",".").toDouble();
+        ui->RodsTable->item(row,column)->setForeground(QBrush(area == 0 ? Qt::red : Qt::black));
         if (area < 1) area = 1;
         area = 280 * log(10*area)/log(1000);
         double max_h = area;
@@ -166,7 +168,9 @@ void Preproccessor::RodsModifier(int row,int column)
 
     }
     else if(column == 2)
-        ;
+    {
+        ui->RodsTable->item(row,column)->setForeground(QBrush(ui->RodsTable->item(row,column)->text().replace(",",".").toDouble() == 0 ? Qt::red : Qt::black));
+    }
     else if (column == 3)
     {
         ForceDrawer(ui->RodsTable->item(row,column)->text().replace(",",".").toDouble(),row);

@@ -2,7 +2,6 @@
 #include "QLineEdit"
 #include "QDoubleValidator"
 #include "QStyleOption"
-#include "limits"
 ValidatedCellWidget::ValidatedCellWidget(QObject *parent,bool _NegRestriction)
     : QStyledItemDelegate(parent)
 {

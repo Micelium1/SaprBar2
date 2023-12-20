@@ -13,6 +13,7 @@ public:
     double E_constGet() const;
     double forceGet() const;
     double allowedTensionGet() const;
+    //bool operator==(const RodsTableDataStructure& right);
 };
 class NodesTableDataStructure
 {
@@ -21,6 +22,7 @@ private:
 public:
     NodesTableDataStructure(double _node_forse);
     double nodeForseGet() const;
+    //bool operator==(const NodesTableDataStructure& right);
 };
 
 

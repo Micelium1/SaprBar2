@@ -6,7 +6,7 @@ Sealing::Sealing(bool _left, QGraphicsItem *parent) : QGraphicsRectItem(parent)
     left = _left;
     setRect(rect().x(),rect().y(),50,rect().height());
     if (left) moveBy(-50,0);
-    setZValue(-1);
+    setZValue(0);
     setPen(QPen(Qt::white));
 }
 

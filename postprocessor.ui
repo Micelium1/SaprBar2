@@ -11,13 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Постпроцессор</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -70,6 +70,11 @@
          <column>
           <property name="text">
            <string>Ux крит.</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>X крит</string>
           </property>
          </column>
         </widget>

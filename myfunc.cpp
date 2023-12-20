@@ -18,12 +18,19 @@ double MyFunc::value(double x) const
     double val = A * (x * x) + B * x + C;
     return qAbs(val) < 1/1e12 ? 0 : val;
 }
-
-double MyFunc::critical() const
+double MyFunc::criticalPoint() const
 {
-    if (A) return value(-B/(2*A));
+    if (A) return (-B/(2*A));
     else return 0;
 }
+
+double MyFunc::criticalValue() const
+{
+    return value(criticalPoint());
+}
+
+
+
 
 QString MyFunc::print() const
 {

@@ -11,9 +11,12 @@ public:
 
     double value(double x) const;
 
-    double critical() const;
+    double criticalValue() const;
+
+    double criticalPoint() const;
 
     QString print() const;
+
 
 private:
     double A = 0,B,C;

@@ -37,7 +37,7 @@ Postprocessor::Postprocessor(const std::vector<RodsTableDataStructure>* _RodsTab
         double NxL = (*vectorNx)[current_rod].value((*RodsTable)[current_rod].lenghtGet());
         double Ux0 = (*vectorUx)[current_rod].value(0);
         double UxL = (*vectorUx)[current_rod].value((*RodsTable)[current_rod].lenghtGet());
-        double Ux_crit = (*vectorUx)[current_rod].critical();
+        double Ux_crit = (*vectorUx)[current_rod].criticalValue();
         double area = (*RodsTable)[current_rod].areaGet();
         double maxStress = qMax(qAbs(Nx0/area),qAbs(NxL/area));
         double maxStressAllowed = (*RodsTable)[current_rod].allowedTensionGet();
@@ -57,6 +57,7 @@ Postprocessor::Postprocessor(const std::vector<RodsTableDataStructure>* _RodsTab
         ui->UxTable->setItem(current_rod,0,new QTableWidgetItem(QString::number(Ux0)));
         ui->UxTable->setItem(current_rod,1,new QTableWidgetItem(QString::number(UxL)));
         ui->UxTable->setItem(current_rod,2,new QTableWidgetItem(QString::number(Ux_crit)));
+        ui->UxTable->setItem(current_rod,3,new QTableWidgetItem(QString::number((*vectorUx)[current_rod].criticalPoint())));
         ui->StressTable->setItem(current_rod,0,new QTableWidgetItem(QString::number(Nx0/area)));
         ui->StressTable->setItem(current_rod,1,new QTableWidgetItem(QString::number(NxL/area)));
         ui->StressTable->setItem(current_rod,2,new QTableWidgetItem(QString::number(maxStress)));
@@ -77,7 +78,7 @@ Postprocessor::Postprocessor(const std::vector<RodsTableDataStructure>* _RodsTab
     double x = 0;
     double draw_x = 0;
     double stress_coef = 10 / (minStress > 0 ? minStress : 1);
-    double Ux_coef = 10 / (minUx > 0 ? minUx : 1);
+    double Ux_coef = 30 / (minUx > 0 ? minUx : 1);
     Nx << QPoint(0,0);
     Ux << QPoint(0,0);
     Stress << QPoint(0,0);
@@ -85,31 +86,28 @@ Postprocessor::Postprocessor(const std::vector<RodsTableDataStructure>* _RodsTab
     {
         double area = (*RodsTable)[current_rod].areaGet();
         double lenght = (*RodsTable)[current_rod].lenghtGet();
-        //qDebug("%f",lenght);
         double draw_lenght = lenght >= 1 ? 140 * log(10*lenght)/log(20) : 140 * log(10)/log(20);
         double Nx0 = (*vectorNx)[current_rod].value(0);
         double NxL = (*vectorNx)[current_rod].value(lenght);
         Nx << QPointF(draw_x,-stress_coef * Nx0) << QPointF(draw_x+draw_lenght,-stress_coef * NxL);
-        //Nx.append(QPointF(draw_x,10 * Nx0));
-        //Nx.append(QPointF(draw_x+draw_lenght,10 * NxL));
         Stress << QPointF(draw_x,-stress_coef * Nx0/area) << QPointF(draw_x+draw_lenght,-stress_coef * NxL/area);
         MyFunc currentUx = (*vectorUx)[current_rod];
         for (int i = 0; i <= 100; ++i)
         {
             Ux << QPointF(draw_x + 0.01 * i * draw_lenght,-Ux_coef * currentUx.value(0.01*i*lenght));
         }
-        sceneUx->addLine(draw_x,-Ux_coef * maxUx - 10,draw_x,Ux_coef * maxUx - 10);
-        sceneNx->addLine(draw_x, -stress_coef * maxNx - 10,draw_x,stress_coef * maxNx - 10);
-        sceneStress->addLine(draw_x,-stress_coef * maxNx - 10,draw_x,stress_coef * maxNx - 10);
+        sceneUx->addLine(draw_x,-Ux_coef * maxUx - 10,draw_x,Ux_coef * maxUx + 10);
+        sceneNx->addLine(draw_x, -stress_coef * maxNx - 10,draw_x,stress_coef * maxNx + 10);
+        sceneStress->addLine(draw_x,-stress_coef * maxNx - 10,draw_x,stress_coef * maxNx + 10);
         x += lenght;
         draw_x += draw_lenght;
     }
     Nx << QPoint(draw_x,0);
     Ux << QPoint(draw_x,0);
     Stress << QPoint(draw_x,0);
-    sceneUx->addLine(draw_x,-Ux_coef * maxUx - 10,draw_x,Ux_coef * maxUx - 10);
-    sceneNx->addLine(draw_x, -stress_coef * maxNx - 10,draw_x,stress_coef * maxNx - 10);
-    sceneStress->addLine(draw_x,-stress_coef * maxNx - 10,draw_x,stress_coef * maxNx - 10);
+    sceneUx->addLine(draw_x,-Ux_coef * maxUx - 10,draw_x,Ux_coef * maxUx + 10);
+    sceneNx->addLine(draw_x, -stress_coef * maxNx - 10,draw_x,stress_coef * maxNx + 10);
+    sceneStress->addLine(draw_x,-stress_coef * maxNx - 10,draw_x,stress_coef * maxNx + 10);
     sceneNx->addPolygon(Nx);
     sceneUx->addPolygon(Ux);
     sceneStress->addPolygon(Stress);
@@ -179,7 +177,7 @@ void Postprocessor::SaveButtonClicked()
         Nx["NxMax"] = qMax(qAbs(Nx0),qAbs(NxL));
         Ux["Ux0"] = Ux0;
         Ux["UxL"] = UxL;
-        Ux["UxCrit"] = (*vectorUx)[IterRow].critical();
+        Ux["UxCrit"] = (*vectorUx)[IterRow].criticalValue();
         Stress["Stress0"] = Stress0;
         Stress["StressL"] = StressL;
         Stress["StressMax"] = qMax(qAbs(Stress0),qAbs(StressL));
